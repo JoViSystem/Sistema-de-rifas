@@ -98,12 +98,16 @@
       </div>
     </div>
     <nav class="flex items-center gap-5 text-sm">
-      <a href="#boletos" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Boletos</a>
-      <a href="#consulta" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Mi compra</a>
+      <a href="#" id="navInicio" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Inicio</a>
+      <a href="#boletos" id="navBoletos" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Boletos</a>
+      <a href="#ganadores" id="navGanadores" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Ganadores</a>
+      <a href="#" id="navVerificador" class="text-slate-300 hover:text-cyan-glow transition">Verificador</a>
       <button id="openAdminBtn" class="text-slate-500 hover:text-cyan-glow transition" title="Panel administrador">⚙</button>
     </nav>
   </div>
 </header>
+
+<div id="homeView">
 
 <!-- ============ WINNER BANNER ============ -->
 <div id="winnerBanner" class="hidden bg-gradient-to-r from-gold to-yellow-400 text-space text-center py-3 px-4 font-bold text-sm sm:text-base"></div>
@@ -214,17 +218,12 @@
   </div>
 </section>
 
-<!-- ============ CONSULTA ============ -->
-<section id="consulta" class="py-4 px-4 sm:px-6 max-w-3xl mx-auto mb-16">
-  <div class="bg-panel border border-line rounded-2xl p-6 sm:p-8">
-    <h2 class="font-display text-xl font-bold mb-1 text-white text-center">Consulta tu compra</h2>
-    <p class="text-center text-slate-400 text-sm mb-5">Escribe tu correo o WhatsApp para ver el estado de tus boletos.</p>
-    <div class="flex gap-2">
-      <input id="lookupInput" type="text" placeholder="Correo o número de WhatsApp" class="field" />
-      <button id="lookupBtn" class="px-5 rounded-lg border border-line text-cyan-glow hover:border-cyan-glow transition whitespace-nowrap">Buscar</button>
-    </div>
-    <div id="lookupResults" class="mt-4 space-y-2"></div>
-  </div>
+<!-- ============ GANADORES ============ -->
+<section id="ganadores" class="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
+  <p class="font-display text-cyan-glow tracking-[0.3em] text-xs text-center mb-2">HISTORIAL</p>
+  <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2 text-center text-white">Ganadores reales, premios reales</h2>
+  <p class="text-slate-400 text-center text-sm mb-8 max-w-lg mx-auto">Cada boleto tiene una historia. Aquí puedes ver quién se ha llevado su premio con Jovi Rifas.</p>
+  <div id="winnersGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
 </section>
 
 <!-- ============ METODOS DE PAGO ============ -->
@@ -259,6 +258,28 @@
   <p>© 2026 <strong class="text-slate-300">Jovi Rifas</strong> · Todos los derechos reservados</p>
   <button id="openAdminBtnFooter" class="mt-2 text-slate-700 hover:text-cyan-glow transition">Acceso administrador</button>
 </footer>
+
+</div><!-- /homeView -->
+
+<!-- ============ VISTA: VERIFICADOR ============ -->
+<div id="verifierView" class="hidden min-h-[80vh] px-4 sm:px-6 py-14 max-w-2xl mx-auto">
+  <button id="backFromVerifier" class="text-sm text-slate-400 hover:text-cyan-glow transition mb-6">← Volver al inicio</button>
+  <p class="font-display text-cyan-glow tracking-[0.3em] text-xs text-center mb-2">VERIFICADOR</p>
+  <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2 text-center text-white">Verifica tu boleto</h2>
+  <p class="text-slate-400 text-center text-sm mb-8">Escribe tu número de boleto, correo o WhatsApp para ver su estado al instante.</p>
+  <div class="bg-panel border border-line rounded-2xl p-6 sm:p-8 shadow-glow">
+    <div class="flex gap-2">
+      <input id="verifierInput" type="text" placeholder="Ej: 0452, tu correo o tu WhatsApp" class="field" />
+      <button id="verifierBtn" class="btn-primary px-5 rounded-lg whitespace-nowrap">Verificar</button>
+    </div>
+    <div id="verifierResults" class="mt-6 space-y-3"></div>
+  </div>
+</div>
+
+<!-- ============ WHATSAPP FLOTANTE ============ -->
+<a id="whatsappFloat" href="#" target="_blank" rel="noopener" class="fixed bottom-5 right-5 z-30 w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-2xl hover:scale-105 transition" title="Escríbenos por WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-7 h-7 fill-white"><path d="M16 3C9.373 3 4 8.373 4 15c0 2.386.703 4.608 1.912 6.47L4 29l7.72-1.87A11.93 11.93 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 21.8c-1.94 0-3.77-.52-5.35-1.43l-.38-.22-4.58 1.11 1.14-4.47-.25-.4A9.77 9.77 0 0 1 5.2 15c0-5.96 4.84-10.8 10.8-10.8S26.8 9.04 26.8 15 21.96 24.8 16 24.8zm5.66-8.1c-.31-.16-1.84-.91-2.12-1.02-.28-.1-.49-.16-.7.16-.2.31-.8 1.02-.98 1.23-.18.2-.36.23-.67.08-.31-.16-1.3-.48-2.48-1.53-.92-.82-1.54-1.83-1.72-2.14-.18-.31-.02-.48.14-.63.14-.14.31-.36.47-.55.16-.18.2-.31.31-.52.1-.2.05-.39-.03-.55-.08-.16-.7-1.68-.96-2.3-.25-.6-.5-.52-.7-.53-.18-.01-.39-.01-.6-.01s-.55.08-.84.39c-.28.31-1.1 1.08-1.1 2.63s1.13 3.05 1.29 3.26c.16.2 2.22 3.39 5.38 4.75.75.32 1.34.51 1.8.66.76.24 1.44.21 1.99.13.61-.09 1.84-.75 2.1-1.48.26-.72.26-1.34.18-1.48-.08-.14-.28-.22-.59-.37z"/></svg>
+</a>
 
 <!-- ============ MODAL: CONFIRMACIÓN DE COMPRA ============ -->
 <div id="confirmModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
@@ -311,6 +332,7 @@
           <input id="setPrice" type="number" class="field" placeholder="Precio por boleto (RD$)" />
           <input id="setTotal" type="number" class="field" placeholder="Total de boletos" />
           <input id="setImage" class="field" placeholder="URL imagen del premio" />
+          <input id="setWhatsapp" class="field" placeholder="WhatsApp de contacto (ej: 18096947000)" />
         </div>
         <textarea id="setDesc" class="field" placeholder="Descripción corta" rows="2"></textarea>
         <button id="saveSettingsBtn" class="btn-primary py-2.5 px-6 rounded-lg text-sm">Guardar cambios</button>
@@ -321,9 +343,31 @@
         <div id="pendingList" class="space-y-3"></div>
       </div>
 
-      <div>
+      <div class="mb-8">
         <h4 class="font-semibold text-white mb-3 flex items-center gap-2">Compras confirmadas <span id="confirmedCountBadge" class="badge bg-cyan-glow/20 text-cyan-glow">0</span></h4>
         <div id="confirmedList" class="space-y-2 max-h-72 overflow-y-auto scrollbar-thin"></div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="font-semibold text-white flex items-center gap-2">Ganadores</h4>
+          <button id="addWinnerBtn" class="text-xs bg-panel2 border border-line text-cyan-glow px-3 py-1.5 rounded-lg hover:border-cyan-glow">+ Agregar ganador</button>
+        </div>
+        <div id="winnerFormWrap" class="hidden bg-panel2 border border-line rounded-xl p-4 space-y-3 mb-4">
+          <input type="hidden" id="winnerEditId" value="" />
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input id="winName" class="field" placeholder="Nombre del ganador" />
+            <input id="winTicket" class="field" placeholder="Número de boleto" />
+            <input id="winPrize" class="field" placeholder="Premio" />
+            <input id="winPhoto" type="file" accept="image/*" class="field !p-2 text-sm" />
+          </div>
+          <textarea id="winStory" class="field" placeholder="Historia o testimonio breve" rows="2"></textarea>
+          <div class="flex gap-2">
+            <button id="saveWinnerBtn" class="btn-gold py-2.5 px-6 rounded-lg text-sm">Guardar ganador</button>
+            <button id="cancelWinnerBtn" class="border border-line py-2.5 px-5 rounded-lg text-sm text-slate-400">Cancelar</button>
+          </div>
+        </div>
+        <div id="winnersAdminList" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -348,11 +392,13 @@
     totalTickets: 2000,
     heroImage: 'https://cdn.pixabay.com/photo/2017/03/27/14/56/toyota-2174452_1280.jpg',
     adminPin: '',
-    winner: null
+    winner: null,
+    whatsappContact: '18096947000'
   };
   const MAX_PER_ORDER = 10;
   let config = { ...DEFAULT_CONFIG };
   let purchases = [];
+  let winners = [];
   let selected = new Set();
   let adminUnlocked = false;
 
@@ -384,6 +430,13 @@
   }
   async function savePurchases(){ await safeSet('jovirifas:purchases', JSON.stringify(purchases), true); }
 
+  async function loadWinners(){
+    const raw = await safeGet('jovirifas:winners', true);
+    if (raw) { try { winners = JSON.parse(raw); } catch(e){ winners = []; } }
+    else winners = [];
+  }
+  async function saveWinners(){ await safeSet('jovirifas:winners', JSON.stringify(winners), true); }
+
   function ticketStatusMap(){
     const map = {};
     for (const p of purchases){
@@ -409,12 +462,102 @@
     $('availableCountTag').textContent = `${availableCount} disponibles`;
     $('progressBar').style.width = Math.min(100, (soldCount/config.totalTickets)*100) + '%';
 
+    const waMsg = encodeURIComponent(`Hola, tengo una pregunta sobre la rifa de ${config.prizeTitle}`);
+    $('whatsappFloat').href = `https://wa.me/${(config.whatsappContact||'').replace(/[^0-9]/g,'')}?text=${waMsg}`;
+
     if (config.winner){
       $('winnerBanner').classList.remove('hidden');
       $('winnerBanner').textContent = `🏆 ¡Sorteo realizado! El boleto ganador es el #${padNum(config.winner.number)} — ${config.winner.name}`;
     } else {
       $('winnerBanner').classList.add('hidden');
     }
+  }
+
+  // ---------- RENDER: WINNERS GALLERY ----------
+  async function renderWinners(){
+    const box = $('winnersGrid');
+    if (!winners.length){
+      box.innerHTML = `<div class="col-span-full text-center py-10 border border-dashed border-line rounded-2xl">
+        <p class="text-slate-500 text-sm">Aún no hay ganadores publicados. ¡El próximo podrías ser tú!</p>
+      </div>`;
+      return;
+    }
+    const sorted = [...winners].sort((a,b)=> new Date(b.date) - new Date(a.date));
+    const cards = await Promise.all(sorted.map(async (w) => {
+      let photo = null;
+      if (w.hasPhoto) photo = await safeGet('jovirifas:winner-photo:' + w.id, true);
+      return `<div class="bg-panel border border-line rounded-2xl overflow-hidden">
+        ${photo ? `<img src="${photo}" class="w-full h-48 object-cover" />` : `<div class="w-full h-48 bg-panel2 flex items-center justify-center text-4xl">🏆</div>`}
+        <div class="p-4">
+          <p class="font-display font-bold text-white">${escapeHtml(w.name)}</p>
+          <p class="text-xs text-cyan-glow mb-2">${escapeHtml(w.prizeTitle)} · Boleto #${escapeHtml(String(w.ticketNumber))}</p>
+          ${w.story ? `<p class="text-sm text-slate-400">${escapeHtml(w.story)}</p>` : ''}
+        </div>
+      </div>`;
+    }));
+    box.innerHTML = cards.join('');
+  }
+
+  // ---------- VIEW ROUTING (home / verifier) ----------
+  function showView(name){
+    if (name === 'verifier'){
+      $('homeView').classList.add('hidden');
+      $('verifierView').classList.remove('hidden');
+      window.scrollTo(0,0);
+    } else {
+      $('verifierView').classList.add('hidden');
+      $('homeView').classList.remove('hidden');
+      if (name === 'boletos'){ setTimeout(()=> $('boletos').scrollIntoView({behavior:'smooth'}), 50); }
+      else if (name === 'ganadores'){ setTimeout(()=> $('ganadores').scrollIntoView({behavior:'smooth'}), 50); }
+      else window.scrollTo(0,0);
+    }
+  }
+  $('navInicio').addEventListener('click', (e)=>{ e.preventDefault(); showView('inicio'); });
+  $('navBoletos').addEventListener('click', (e)=>{ e.preventDefault(); showView('boletos'); });
+  $('navGanadores').addEventListener('click', (e)=>{ e.preventDefault(); showView('ganadores'); });
+  $('navVerificador').addEventListener('click', (e)=>{ e.preventDefault(); showView('verifier'); });
+  $('backFromVerifier').addEventListener('click', ()=> showView('inicio'));
+
+  $('verifierBtn').addEventListener('click', runVerifier);
+  $('verifierInput').addEventListener('keydown', (e)=>{ if (e.key==='Enter') runVerifier(); });
+
+  async function runVerifier(){
+    const raw = $('verifierInput').value.trim();
+    const box = $('verifierResults');
+    if (!raw){ box.innerHTML = '<p class="text-sm text-slate-500">Escribe un dato para buscar.</p>'; return; }
+    await loadPurchases();
+    const q = raw.toLowerCase().replace(/\s|-/g,'');
+    const asNumber = parseInt(raw, 10);
+
+    let matches = [];
+    if (!isNaN(asNumber)){
+      matches = purchases.filter(p => p.numbers.includes(asNumber) && p.status !== 'rechazado');
+    }
+    if (!matches.length){
+      matches = purchases.filter(p =>
+        p.status !== 'rechazado' &&
+        (p.email.toLowerCase() === q || p.whatsapp.toLowerCase().replace(/\s|-/g,'') === q)
+      );
+    }
+
+    if (!matches.length){
+      box.innerHTML = '<p class="text-sm text-slate-500">No encontramos boletos con ese dato. Verifica e intenta de nuevo.</p>';
+      return;
+    }
+
+    box.innerHTML = matches.map(p => {
+      const statusLabel = p.status==='confirmado' ? '<span class="badge bg-cyan-glow/20 text-cyan-glow">Confirmado</span>'
+        : '<span class="badge bg-gold/20 text-gold">Pendiente de confirmación</span>';
+      const won = config.winner && p.numbers.includes(config.winner.number);
+      return `<div class="bg-panel2 border ${won ? 'border-gold' : 'border-line'} rounded-xl p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <p class="font-semibold text-white text-sm">${escapeHtml(p.name)}</p>
+          ${statusLabel}
+        </div>
+        <div class="flex flex-wrap gap-1.5">${p.numbers.map(n=>`<span class="text-xs bg-space border border-line rounded px-2 py-0.5 ${config.winner && n===config.winner.number ? 'text-gold border-gold' : ''}">#${padNum(n)}</span>`).join('')}</div>
+        ${won ? '<p class="text-gold text-sm font-bold mt-3">🏆 ¡Uno de estos números resultó ganador! Te contactaremos por WhatsApp.</p>' : ''}
+      </div>`;
+    }).join('');
   }
 
   // ---------- RENDER: GRID ----------
@@ -575,25 +718,6 @@
 
   $('closeConfirmModal').addEventListener('click', ()=> $('confirmModal').classList.add('hidden'));
 
-  // ---------- LOOKUP ----------
-  $('lookupBtn').addEventListener('click', async ()=>{
-    const q = $('lookupInput').value.trim().toLowerCase();
-    const box = $('lookupResults');
-    if (!q){ box.innerHTML = ''; return; }
-    await loadPurchases();
-    const mine = purchases.filter(p => p.email.toLowerCase()===q || p.whatsapp.toLowerCase().replace(/\s|-/g,'')===q.replace(/\s|-/g,''));
-    if (!mine.length){ box.innerHTML = '<p class="text-sm text-slate-500">No encontramos compras con ese dato.</p>'; return; }
-    box.innerHTML = mine.map(p => {
-      const statusLabel = p.status==='confirmado' ? '<span class="badge bg-cyan-glow/20 text-cyan-glow">Confirmado</span>'
-        : p.status==='rechazado' ? '<span class="badge bg-red-500/20 text-red-400">Rechazado</span>'
-        : '<span class="badge bg-gold/20 text-gold">Pendiente</span>';
-      return `<div class="bg-panel2 border border-line rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex flex-wrap gap-1">${p.numbers.map(n=>`<span class="text-xs bg-space border border-line rounded px-2 py-0.5">#${padNum(n)}</span>`).join('')}</div>
-        ${statusLabel}
-      </div>`;
-    }).join('');
-  });
-
   // ---------- ADMIN ----------
   function openAdmin(){ $('adminModal').classList.remove('hidden'); }
   function closeAdmin(){ $('adminModal').classList.add('hidden'); }
@@ -642,6 +766,7 @@
     $('adminPinGate').classList.add('hidden');
     $('adminDashboard').classList.remove('hidden');
     await loadPurchases();
+    await loadWinners();
     renderAdminDashboard();
   }
 
@@ -664,6 +789,7 @@
     $('setTotal').value = config.totalTickets;
     $('setImage').value = config.heroImage;
     $('setDesc').value = config.prizeDesc;
+    $('setWhatsapp').value = config.whatsappContact || '';
 
     $('pendingList').innerHTML = pending.length ? pending.map(p => `
       <div class="bg-panel2 border border-line rounded-xl p-4">
@@ -689,6 +815,18 @@
         <span class="text-slate-200">${escapeHtml(p.name)}</span>
         <div class="flex flex-wrap gap-1">${p.numbers.map(n=>`<span class="text-xs bg-space border border-line rounded px-2 py-0.5">#${padNum(n)}</span>`).join('')}</div>
       </div>`).join('') : '<p class="text-sm text-slate-500">Aún no hay compras confirmadas.</p>';
+
+    $('winnersAdminList').innerHTML = winners.length ? winners.map(w => `
+      <div class="bg-panel2 border border-line rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <div>
+          <span class="text-white font-medium">${escapeHtml(w.name)}</span>
+          <span class="text-slate-500 text-xs"> · ${escapeHtml(w.prizeTitle)} · #${escapeHtml(String(w.ticketNumber))}</span>
+        </div>
+        <div class="flex gap-2">
+          <button data-editwin="${w.id}" class="text-xs text-cyan-glow hover:underline">Editar</button>
+          <button data-delwin="${w.id}" class="text-xs text-red-400 hover:underline">Eliminar</button>
+        </div>
+      </div>`).join('') : '<p class="text-sm text-slate-500">Aún no has agregado ganadores.</p>';
   }
 
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -720,6 +858,28 @@
         $('voucherLoading').textContent = 'No se pudo cargar el comprobante.';
       }
     }
+
+    const editWinId = e.target.dataset.editwin;
+    const delWinId = e.target.dataset.delwin;
+    if (editWinId){
+      const w = winners.find(x=>x.id===editWinId);
+      if (w){
+        $('winnerEditId').value = w.id;
+        $('winName').value = w.name;
+        $('winTicket').value = w.ticketNumber;
+        $('winPrize').value = w.prizeTitle;
+        $('winStory').value = w.story || '';
+        $('winnerFormWrap').classList.remove('hidden');
+      }
+    }
+    if (delWinId){
+      if (confirm('¿Eliminar este ganador de la galería pública?')){
+        winners = winners.filter(x=>x.id!==delWinId);
+        await saveWinners();
+        renderAdminDashboard();
+        await refreshAll();
+      }
+    }
   });
 
   $('closeVoucherModal').addEventListener('click', ()=> $('voucherModal').classList.add('hidden'));
@@ -747,9 +907,59 @@
     const winnerEntry = pool[Math.floor(Math.random()*pool.length)];
     config.winner = { number: winnerEntry.n, name: winnerEntry.p.name, drawnAt: nowISO() };
     await saveConfig();
+
+    await loadWinners();
+    winners.push({
+      id: uid(),
+      name: winnerEntry.p.name,
+      ticketNumber: winnerEntry.n,
+      prizeTitle: config.prizeTitle,
+      story: '',
+      hasPhoto: false,
+      date: nowISO()
+    });
+    await saveWinners();
+
     renderAdminDashboard();
     await refreshAll();
-    alert(`🏆 Ganador: boleto #${padNum(winnerEntry.n)} — ${winnerEntry.p.name}`);
+    alert(`🏆 Ganador: boleto #${padNum(winnerEntry.n)} — ${winnerEntry.p.name}. Ya lo agregué a la galería de ganadores, puedes editarlo para sumar foto e historia.`);
+  });
+
+  $('addWinnerBtn').addEventListener('click', ()=>{
+    $('winnerEditId').value = '';
+    $('winName').value = ''; $('winTicket').value = ''; $('winPrize').value = config.prizeTitle;
+    $('winStory').value = ''; $('winPhoto').value = '';
+    $('winnerFormWrap').classList.remove('hidden');
+  });
+  $('cancelWinnerBtn').addEventListener('click', ()=> $('winnerFormWrap').classList.add('hidden'));
+
+  $('saveWinnerBtn').addEventListener('click', async ()=>{
+    const name = $('winName').value.trim();
+    const ticketNumber = $('winTicket').value.trim();
+    if (!name || !ticketNumber){ alert('Nombre y número de boleto son obligatorios.'); return; }
+    const editId = $('winnerEditId').value;
+    const file = $('winPhoto').files[0];
+
+    let entry = editId ? winners.find(x=>x.id===editId) : null;
+    const isNew = !entry;
+    if (isNew){ entry = { id: uid(), date: nowISO(), hasPhoto: false }; }
+
+    entry.name = name;
+    entry.ticketNumber = ticketNumber;
+    entry.prizeTitle = $('winPrize').value.trim() || config.prizeTitle;
+    entry.story = $('winStory').value.trim();
+
+    if (file){
+      const dataUrl = await compressImage(file, 700, 0.75);
+      await safeSet('jovirifas:winner-photo:' + entry.id, dataUrl, true);
+      entry.hasPhoto = true;
+    }
+
+    if (isNew) winners.push(entry);
+    await saveWinners();
+    $('winnerFormWrap').classList.add('hidden');
+    renderAdminDashboard();
+    await refreshAll();
   });
 
   $('resetRaffleBtn').addEventListener('click', async ()=>{
@@ -766,9 +976,11 @@
   async function refreshAll(){
     await loadConfig();
     await loadPurchases();
+    await loadWinners();
     renderHeroAndStats();
     renderGrid();
     renderSelection();
+    renderWinners();
   }
 
   (async function init(){
