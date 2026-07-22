@@ -102,7 +102,7 @@
       <a href="#boletos" id="navBoletos" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Boletos</a>
       <a href="#ganadores" id="navGanadores" class="hidden sm:inline text-slate-300 hover:text-cyan-glow transition">Ganadores</a>
       <a href="#" id="navVerificador" class="text-slate-300 hover:text-cyan-glow transition">Verificador</a>
-      <button id="openAdminBtn" class="text-slate-500 hover:text-cyan-glow transition" title="Panel administrador">⚙</button>
+      <button id="openAdminBtn" class="hidden">⚙</button>
     </nav>
   </div>
 </header>
@@ -283,7 +283,7 @@
 <!-- ============ FOOTER ============ -->
 <footer class="border-t border-line py-8 text-center text-xs text-slate-500">
   <p>© 2026 <strong class="text-slate-300">Jovi Rifas</strong> · Todos los derechos reservados</p>
-  <button id="openAdminBtnFooter" class="mt-2 text-slate-700 hover:text-cyan-glow transition">Acceso administrador</button>
+  <button id="openAdminBtnFooter" class="hidden">Acceso administrador</button>
 </footer>
 
 </div><!-- /homeView -->
@@ -762,7 +762,10 @@
 
   // ---------- ADMIN ----------
   function openAdmin(){ $('adminModal').classList.remove('hidden'); }
-  function closeAdmin(){ $('adminModal').classList.add('hidden'); }
+  function closeAdmin(){
+    $('adminModal').classList.add('hidden');
+    if (window.location.hash === '#admin') history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
   $('openAdminBtn').addEventListener('click', openAdmin);
   $('openAdminBtnFooter').addEventListener('click', openAdmin);
   $('closeAdminModal').addEventListener('click', closeAdmin);
@@ -1027,6 +1030,18 @@
 
   (async function init(){
     await refreshAll();
+    // acceso oculto: nadie ve un botón de admin en la página.
+    // entra escribiendo #admin al final del link de tu página, o presionando Ctrl+Alt+A
+    if (window.location.hash === '#admin'){
+      await refreshAdminGate();
+      openAdmin();
+    }
+    window.addEventListener('keydown', async (e)=>{
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'a'){
+        await refreshAdminGate();
+        openAdmin();
+      }
+    });
     // light polling so multiple visitors stay roughly in sync
     setInterval(refreshAll, 20000);
   })();
