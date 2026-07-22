@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Jovi Rifas · Sorteos en línea</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -154,12 +155,19 @@
   </div>
 
   <div class="max-w-md mx-auto mb-8">
-    <div class="flex justify-between text-xs text-slate-400 mb-1">
-      <span id="soldCountTag">0 vendidos</span>
-      <span id="availableCountTag">2000 disponibles</span>
+    <div id="urgencyBadge" class="hidden inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/40 text-red-400 text-xs font-bold tracking-wide">
+      <span class="w-1.5 h-1.5 rounded-full bg-red-400 pulse-dot"></span> ¡ÚLTIMOS BOLETOS!
+    </div>
+    <div class="flex items-end justify-center gap-2 mb-2">
+      <span id="remainingCountTag" class="font-display text-5xl font-black text-gold drop-shadow-[0_0_20px_rgba(242,183,5,0.35)]">2000</span>
+      <span class="text-slate-400 text-sm mb-1.5">boletos disponibles</span>
     </div>
     <div class="w-full h-3 rounded-full bg-panel2 border border-line overflow-hidden">
-      <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-glow to-cyan-deep" style="width:0%"></div>
+      <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-glow to-cyan-deep transition-all duration-500" style="width:0%"></div>
+    </div>
+    <div class="flex justify-between text-xs text-slate-500 mt-1.5">
+      <span id="soldCountTag">0 vendidos</span>
+      <span id="availableCountTag">2000 disponibles</span>
     </div>
   </div>
 
@@ -361,6 +369,7 @@
 
       <div class="flex flex-wrap gap-2 mb-6 border-b border-line pb-5">
         <button id="drawWinnerBtn" class="btn-gold py-2.5 px-5 rounded-lg text-sm">🎲 Realizar sorteo (rifa activa)</button>
+        <button id="exportExcelBtn" class="border border-line py-2.5 px-5 rounded-lg text-sm text-slate-300 hover:border-cyan-glow">📊 Exportar a Excel</button>
         <button id="toggleGeneralBtn" class="border border-line py-2.5 px-5 rounded-lg text-sm text-slate-300 hover:border-cyan-glow">Ajustes generales</button>
       </div>
 
@@ -380,9 +389,18 @@
             <input id="rTitle" class="field" placeholder="Título del premio (ej: Toyota 2018)" />
             <input id="rPrice" type="number" class="field" placeholder="Precio por boleto (RD$)" />
             <input id="rTotal" type="number" class="field" placeholder="Total de boletos" />
-            <input id="rImage" class="field" placeholder="URL foto real del premio (opcional)" />
+            <input id="rCategory" class="field" placeholder="Categoría (ej: Autos, Tech, Motos)" />
           </div>
           <textarea id="rDesc" class="field" placeholder="Descripción del premio" rows="2"></textarea>
+          <div>
+            <span class="text-sm text-slate-400 mb-1 block">Foto del premio</span>
+            <div class="flex flex-wrap items-center gap-3">
+              <img id="rImagePreview" class="hidden w-20 h-20 rounded-lg object-cover border border-line" />
+              <input id="rImageFile" type="file" accept="image/*" class="field !p-2 text-sm flex-1 min-w-[200px]" />
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Sube una foto, o pega una URL si ya tienes la imagen en línea:</p>
+            <input id="rImage" class="field mt-1" placeholder="URL de la foto (opcional si subes un archivo)" />
+          </div>
           <div class="flex gap-2">
             <button id="saveRaffleBtn" class="btn-primary py-2.5 px-6 rounded-lg text-sm">Guardar rifa</button>
             <button id="cancelRaffleBtn" class="border border-line py-2.5 px-5 rounded-lg text-sm text-slate-400">Cancelar</button>
@@ -551,7 +569,7 @@
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   // ---------- RENDER: HERO / STATS ----------
-  function renderHeroAndStats(){
+  async function renderHeroAndStats(){
     const raffle = getActiveRaffle();
     const noRaffleBox = $('noActiveRaffle');
     const heroBits = [$('heroMainBits')];
@@ -571,8 +589,12 @@
     $('prizeLongDesc').textContent = raffle.description || '';
     $('maxPerOrder').textContent = MAX_PER_ORDER;
 
-    if (raffle.heroImage){
-      $('prizeImage').src = raffle.heroImage;
+    let imageSrc = raffle.heroImage || '';
+    if (!imageSrc && raffle.hasUploadedImage){
+      imageSrc = await safeGet('jovirifas:raffle-image:' + raffle.id, true) || '';
+    }
+    if (imageSrc){
+      $('prizeImage').src = imageSrc;
       $('prizeImage').classList.remove('hidden');
       $('prizeImagePlaceholder').classList.add('hidden');
     } else {
@@ -587,7 +609,13 @@
     const availableCount = raffle.totalTickets - soldCount - pendingCount;
     $('soldCountTag').textContent = `${soldCount} vendidos`;
     $('availableCountTag').textContent = `${availableCount} disponibles`;
+    $('remainingCountTag').textContent = availableCount;
     $('progressBar').style.width = Math.min(100, (soldCount/raffle.totalTickets)*100) + '%';
+    if (availableCount > 0 && availableCount <= Math.max(20, raffle.totalTickets * 0.05)){
+      $('urgencyBadge').classList.remove('hidden');
+    } else {
+      $('urgencyBadge').classList.add('hidden');
+    }
 
     const waMsg = encodeURIComponent(`Hola, tengo una pregunta sobre la rifa de ${raffle.title}`);
     $('whatsappFloat').href = `https://wa.me/${(config.whatsappContact||'').replace(/[^0-9]/g,'')}?text=${waMsg}`;
@@ -1068,8 +1096,16 @@
         $('rTitle').value = r.title;
         $('rPrice').value = r.ticketPrice;
         $('rTotal').value = r.totalTickets;
+        $('rCategory').value = r.category || '';
         $('rImage').value = r.heroImage || '';
         $('rDesc').value = r.description || '';
+        $('rImageFile').value = '';
+        if (r.hasUploadedImage){
+          const photo = await safeGet('jovirifas:raffle-image:' + r.id, true);
+          if (photo){ $('rImagePreview').src = photo; $('rImagePreview').classList.remove('hidden'); }
+        } else {
+          $('rImagePreview').classList.add('hidden');
+        }
         $('raffleFormWrap').classList.remove('hidden');
         $('raffleFormWrap').scrollIntoView({behavior:'smooth', block:'center'});
       }
@@ -1096,6 +1132,31 @@
 
   $('closeVoucherModal').addEventListener('click', ()=> $('voucherModal').classList.add('hidden'));
 
+  $('exportExcelBtn').addEventListener('click', ()=>{
+    if (!purchases.length){ alert('Todavía no hay ninguna compra para exportar.'); return; }
+    const rows = purchases.map(p => {
+      const r = raffles.find(x=>x.id===p.raffleId);
+      return {
+        'Rifa': r ? r.title : 'Rifa eliminada',
+        'Nombre': p.name,
+        'WhatsApp': p.whatsapp,
+        'Correo': p.email,
+        'Números': p.numbers.join(', '),
+        'Cantidad': p.numbers.length,
+        'Método de pago': p.paymentMethod,
+        'Estado': p.status,
+        'Total (RD$)': r ? p.numbers.length * r.ticketPrice : '',
+        'Fecha de compra': new Date(p.createdAt).toLocaleString('es-DO')
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{wch:20},{wch:22},{wch:16},{wch:26},{wch:20},{wch:10},{wch:16},{wch:12},{wch:14},{wch:20}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Boletos');
+    const fecha = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb, `jovi-rifas-boletos-${fecha}.xlsx`);
+  });
+
   $('toggleGeneralBtn').addEventListener('click', ()=> $('generalPanel').classList.toggle('hidden'));
   $('saveGeneralBtn').addEventListener('click', async ()=>{
     config.whatsappContact = $('setWhatsapp').value.trim() || config.whatsappContact;
@@ -1107,7 +1168,8 @@
   $('addRaffleBtn').addEventListener('click', ()=>{
     $('raffleEditId').value = '';
     $('rTitle').value = ''; $('rPrice').value = ''; $('rTotal').value = '';
-    $('rImage').value = ''; $('rDesc').value = '';
+    $('rCategory').value = ''; $('rImage').value = ''; $('rDesc').value = '';
+    $('rImageFile').value = ''; $('rImagePreview').classList.add('hidden');
     $('raffleFormWrap').classList.remove('hidden');
   });
   $('cancelRaffleBtn').addEventListener('click', ()=> $('raffleFormWrap').classList.add('hidden'));
@@ -1121,13 +1183,24 @@
 
     let r = editId ? raffles.find(x=>x.id===editId) : null;
     const isNew = !r;
-    if (isNew){ r = { id: uid(), status: 'activa', winner: null, createdAt: nowISO() }; }
+    if (isNew){ r = { id: uid(), status: 'activa', winner: null, hasUploadedImage: false, createdAt: nowISO() }; }
 
     r.title = title;
     r.ticketPrice = price;
     r.totalTickets = total;
-    r.heroImage = $('rImage').value.trim();
+    r.category = $('rCategory').value.trim();
     r.description = $('rDesc').value.trim();
+
+    const file = $('rImageFile').files[0];
+    if (file){
+      const dataUrl = await compressImage(file, 900, 0.75);
+      await safeSet('jovirifas:raffle-image:' + r.id, dataUrl, true);
+      r.hasUploadedImage = true;
+      r.heroImage = ''; // la foto subida tiene prioridad sobre la URL
+    } else {
+      const urlVal = $('rImage').value.trim();
+      if (urlVal){ r.heroImage = urlVal; r.hasUploadedImage = false; }
+    }
 
     if (isNew){
       raffles.push(r);
@@ -1212,7 +1285,7 @@
     await loadRaffles();
     await loadPurchases();
     await loadWinners();
-    renderHeroAndStats();
+    await renderHeroAndStats();
     renderGrid();
     renderSelection();
     renderWinners();
